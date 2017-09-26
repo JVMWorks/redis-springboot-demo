@@ -24,6 +24,7 @@ public class RoutesController {
     public String index() {
         String result = "Pages to visit: /trending, /riak, /redis, /neo4j, /memcached, /mongodb, /couchdb, /cassandra \n";
         result += "To empty DB of all data hit [Think again!]: /resetdb \n";
+        result += "To list all keys in Redis DB, go hit [Admin Only]: /allkeys \n";
         result += "Page Visit Count: " + redisDBService.incrementVisitorCountOf(PAGE_HOME);
         return result;
     }
@@ -32,6 +33,13 @@ public class RoutesController {
     public String trending() {
         String result = "Trending Pages: \n";
         result += redisDBService.getTrendingPages(0,2).stream().collect(Collectors.joining("\n"));
+        return result;
+    }
+
+    @RequestMapping(value = "/allkeys", method = RequestMethod.GET)
+    public String allkeys() {
+        String result = "All Keys in Redis DB @ Server-side: \n";
+        result += redisDBService.getAllKeys().stream().collect(Collectors.joining("\n"));
         return result;
     }
 

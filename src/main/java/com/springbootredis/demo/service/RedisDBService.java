@@ -48,4 +48,10 @@ public class RedisDBService {
             return jedis.flushAll();
         }
     }
+
+    public Set<String> getAllKeys() {
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.keys("*");
+        }
+    }
 }
