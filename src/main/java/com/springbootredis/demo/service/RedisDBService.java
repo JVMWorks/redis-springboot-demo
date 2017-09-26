@@ -26,6 +26,20 @@ public class RedisDBService {
     @Autowired
     private JedisPool jedisPool;
 
+    public long removeTopNTrendingPages(int n) {
+        //This should ideally be running as Cron Job. Ideally!
+        try(Jedis jedis = jedisPool.getResource()) {
+            //zrange will sort the set in ascending order
+            //negative indexes start from decending order of the set
+            //-n as start index in this context is the Nth top ranking member
+            //-1 index indicates the topmost ranking index or the last index
+            //ref.:
+            // https://redis.io/commands#sorted_set
+            // https://www.w3resource.com/redis/redis-zremrangebyrank-key-start-stop.php
+            return jedis.zremrangeByRank(TRENDING_PAGES, -n, -1);
+        }
+    }
+
     public Set<String> getTrendingPages(int start, int end) {
         try(Jedis jedis = jedisPool.getResource()) {
             return jedis.zrevrange(TRENDING_PAGES, start, end);

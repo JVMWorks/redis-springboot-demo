@@ -24,9 +24,17 @@ public class RoutesController {
     public String index() {
         String result = "Pages that matter: /riak, /redis, /neo4j, /memcached, /mongodb, /couchdb, /cassandra \n";
         result += "Pages for stats:  /trending, /trendingDetails \n";
+        result += "Reset Trending Pages (for result relevance) [Admin Only!]:  /resetPageTrends \n";
         result += "To empty DB of all data hit [Think again!]: /resetdb \n";
         result += "To list all keys in Redis DB, go hit [Admin Only]: /allkeys \n";
         result += "Page Visit Count: " + redisDBService.incrementVisitorCountOf(PAGE_HOME);
+        return result;
+    }
+
+    @RequestMapping(value = "/resetPageTrends", method = RequestMethod.GET)
+    public String resetPageTrends() {
+        String result = "Number of Top Trending Pages Removed for result freshness: ";
+        result += redisDBService.removeTopNTrendingPages(2);
         return result;
     }
 
