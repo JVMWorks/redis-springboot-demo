@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Tuple;
 
 import java.util.Set;
 
@@ -28,6 +29,12 @@ public class RedisDBService {
     public Set<String> getTrendingPages(int start, int end) {
         try(Jedis jedis = jedisPool.getResource()) {
             return jedis.zrevrange(TRENDING_PAGES, start, end);
+        }
+    }
+
+    public Set<Tuple> getTrendingPagesWithHitCount(int start, int end) {
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.zrevrangeWithScores(TRENDING_PAGES, start, end);
         }
     }
 

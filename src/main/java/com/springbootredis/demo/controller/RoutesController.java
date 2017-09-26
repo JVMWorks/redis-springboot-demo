@@ -22,7 +22,8 @@ public class RoutesController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index() {
-        String result = "Pages to visit: /trending, /riak, /redis, /neo4j, /memcached, /mongodb, /couchdb, /cassandra \n";
+        String result = "Pages that matter: /riak, /redis, /neo4j, /memcached, /mongodb, /couchdb, /cassandra \n";
+        result += "Pages for stats:  /trending, /trendingDetails \n";
         result += "To empty DB of all data hit [Think again!]: /resetdb \n";
         result += "To list all keys in Redis DB, go hit [Admin Only]: /allkeys \n";
         result += "Page Visit Count: " + redisDBService.incrementVisitorCountOf(PAGE_HOME);
@@ -32,7 +33,19 @@ public class RoutesController {
     @RequestMapping(value = "/trending", method = RequestMethod.GET)
     public String trending() {
         String result = "Trending Pages: \n";
-        result += redisDBService.getTrendingPages(0,2).stream().collect(Collectors.joining("\n"));
+        result += redisDBService.getTrendingPages(0,-1)
+                .stream()
+                .collect(Collectors.joining("\n"));
+        return result;
+    }
+
+    @RequestMapping(value = "/trendingDetails", method = RequestMethod.GET)
+    public String trendingWithHitCount() {
+        String result = "Trending Page Details: \n";
+        result += redisDBService.getTrendingPagesWithHitCount(0,-1)
+                .stream()
+                .map(t -> String.format("[%s:%.0f]",t.getElement(),t.getScore()))
+                .collect(Collectors.joining("\n"));
         return result;
     }
 
